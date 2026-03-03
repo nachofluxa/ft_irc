@@ -25,7 +25,7 @@ Server::Server(int port, int timeout) : _serverSocket(-1), _port(port), _timeout
 Server::~Server()
 {
 	size_t i;
-	
+
 	i = 0;
 	while (i < _fds.size())
 	{

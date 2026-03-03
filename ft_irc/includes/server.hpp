@@ -13,6 +13,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <cstddef>
 #include <vector>
 #include <poll.h>
 
@@ -27,7 +28,7 @@ class Server
 		bool	configureSocket();
 		bool	startListening();
 		void	handleNewConnection();
-		void	handleClient(size_t index);
+		void	handleClient(std::size_t index);
 		void	defragment();
 
 	public:

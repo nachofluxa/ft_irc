@@ -10,32 +10,28 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "check_argv.hpp"
 #include "server.hpp"
-
-void	start_ft_irc(void)
-{
-	std::cout << "WELL DONE, YOU ARE IN." << std::endl;
-}
+#include <cstdlib>
+#include <iostream>
 
 int main(int argc, char **argv)
 {
-	int	aux;
+	// int				aux;
+	unsigned int	port;
 	if (argc != 3)
 	{
 		std::cout << "There must be 3 and only 3 args." << std::endl;
 		return (1);
 	}
-	aux = check_argv(argv);
-	if (aux == 1)
-		start_ft_irc();
-	else if (aux == 2)
-		std::cout << "There is something wrong with the executable." << std::endl;
-	else if (aux == 3)
-		std::cout << "There is something wrong with the port." << std::endl;
-	else if (aux == 4)
-		std::cout << "There is something wrong with the password." << std::endl;
-	else
-		std::cout << "Something went wrong." << std::endl;
-	return (1);
+	port = std::atoi( argv[ 2 ] );
+	if ( port < 1024 )
+	{
+		std::cerr << "Invalid port. ( 1024 – 49151 )" << std::endl;
+		return ( 1 );
+	}
+	Server serv( port, -1 );
+
+	serv.init();
+	serv.run();
+	return ( 0 );
 }
