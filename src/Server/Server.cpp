@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <vector>
+#include "Command/Command.hpp"
 
 Server::Server( int port ) : _serverSocket( -1 ), _port( port ), _shouldDefragment( false )
 {}
@@ -168,13 +169,47 @@ void Server::_handleClient( size_t index )
 	if ( _clients.count( fd ) )
 	{
 		_clients[ fd ]->addBuffer( std::string( buffer ) );
-		std::string clientData = _clients[ fd ]->getBuffer();
-		if ( clientData.find( "\n" ) != std::string::npos )
+		if ( _clients[ fd ]->isBufferComplete() )
 		{
-			// Aquí va el parser
+			std::string	buf= _clients[ fd ]->getBuffer();
+			// std::vector<std::string>	splitBuf = split( buf );
+			t_command	bufCommand = commandFactory( buf );
 
 			std::cout << "( Server ) el mensaje del cliente [ " << fd << " ] es :" << std::endl;
-			std::cout << " + " << _clients[ fd ]->getBuffer();
+			std::cout << " + " << buf;
+
+			// Desde aquí hasta la siguiente marca se tiene que sustituir por la llamada
+			//   a la función correspondiente
+			send( fd, "Prefix - ", 9, MSG_NOSIGNAL );
+			send( fd, bufCommand.prefix.c_str(), bufCommand.prefix.size(), MSG_NOSIGNAL );
+			send( fd, "\n", 1, MSG_NOSIGNAL );
+			send( fd, "Command - ", 10, MSG_NOSIGNAL );
+			send( fd, bufCommand.type.c_str(), bufCommand.type.size(), MSG_NOSIGNAL );
+			send( fd, "\n", 1, MSG_NOSIGNAL );
+			send( fd, "Params - ", 9, MSG_NOSIGNAL );
+			for ( std::vector< std::string >::iterator vecIter = bufCommand.params.begin(); vecIter != bufCommand.params.end(); ++vecIter )
+				send( fd, vecIter->c_str(), vecIter->size(), MSG_NOSIGNAL );
+			send( fd, "\n", 1, MSG_NOSIGNAL );
+			send( fd, "Trailing - ", 11, MSG_NOSIGNAL );
+			send( fd, bufCommand.trailing.c_str(), bufCommand.trailing.size(), MSG_NOSIGNAL );
+			send( fd, "\n", 1, MSG_NOSIGNAL );
+			// Auquí termina el segmente que hay que sustituri por la llamada a la función
+			//   correspondiente
+
+			// for ( std::vector<std::string>::iterator vecIter = splitBuf.begin(); vecIter != splitBuf.end(); ++vecIter )
+			// {
+			// 	/*
+			// 	 * Modificar esto para parsear correctamente y enviar mensajes
+			// 	 */
+			// 	if ( vecIter == splitBuf.begin() && vecIter->find( ':' ) != std::string::npos )
+			// 		send( fd, "Prefix - ", 10, MSG_NOSIGNAL );
+			// 	else if ( vecIter->find( ':' ) != std::string::npos )
+			// 		send( fd, "Trailing - ", 11, MSG_NOSIGNAL );
+			// 	else
+			// 		send( fd, "Command/Param - ", 16, MSG_NOSIGNAL );
+			// 	send( fd, vecIter->c_str(), vecIter->size(), MSG_NOSIGNAL );
+			// 	send( fd, "\n", 1, MSG_NOSIGNAL );
+			// }
 
 			_clients[ fd ]->clearBuffer();
 		}

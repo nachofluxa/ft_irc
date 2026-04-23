@@ -1,3 +1,4 @@
 .clangd
 ircserv
 build
+.DS_Store

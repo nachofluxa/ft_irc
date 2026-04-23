@@ -1,35 +1,40 @@
-NAME			=	ircserv
-
-CXX				=	c++
-CXXFLAGS		=	-Wall -Wextra -Werror -std=c++98
-INCLUDES		=	-Iincludes
-
-SRC_DIR			=	src
-OBJ_DIR			=	build
-
-SRC				=	$(SRC_DIR)/main.cpp \
-					$(SRC_DIR)/Client/Client.cpp \
-					$(SRC_DIR)/Server/Server.cpp
+NAME		=	ircserv
+INC			=	./includes/
+TEMPLAT		=	./templates/
+BUILD		=	./build/
+SRC			=	./src/
 
 
-OBJ				=	$(OBJ:%.o=%.o)
-OBJ				=	$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
+SRCS		=	main.cpp \
+				Client/Client.cpp \
+				Client/validators.cpp \
+				Command/commandFactory/split.cpp \
+				Command/commandFactory/commandFactory.cpp \
+				Server/Server.cpp
 
-all				:	$(NAME)
+OBJS		=	$(addprefix $(BUILD), $(SRCS:.cpp=.o))
+DEPS		=	$(addprefix $(BUILD), $(SRCS:.cpp=.d))
 
-$(NAME)			:	$(OBJ)
-					$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
+CXX			=	c++
+CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 -MMD -fsanitize=address
 
-$(OBJ_DIR)/%.o	:	$(SRC_DIR)/%.cpp
-					@ mkdir -p $(dir $@)
-					$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+all			:	$(NAME)
 
-clean			:
-					rm -rf $(OBJ_DIR)
+$(BUILD)%.o	:	$(SRC)%.cpp
+				@ mkdir -p $(dir $@)
+				@ $(CC) $(CFLAGS) -c -o $@ $< -I$(INC)
 
-fclean			:	clean
-					rm -f $(NAME)
+$(NAME)		:	$(OBJS)
+				@ $(CXX) $(CFLAGS) -o $(NAME) $(OBJS)
 
-re				: fclean all
+clean		:
+				rm -rf $(BUILD)
 
-.PHONY			: all clean fclean re
+fclean		:	clean
+				rm -f $(NAME)
+
+re			:	fclean all
+
+.PHONY		:	all clean fclean re
+
+-include $(DEPS)

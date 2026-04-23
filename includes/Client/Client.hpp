@@ -6,11 +6,12 @@
 class	Client
 {
 	private:
-		int			_fd;
-		std::string	_nick;
-		std::string	_user;
-		std::string _buffer;
-		bool		_isRegistered;
+		int				_fd;
+		std::string		_nick;
+		std::string		_user;
+		std::string		_name;
+		std::string 	_buffer;
+		unsigned char	_range;
 	public:
 		Client( int fd );
 		~Client( void );
@@ -18,13 +19,12 @@ class	Client
 		int					getFd( void ) const;
 		const std::string	&getNick( void ) const;
 		const std::string	&getUser( void ) const;
+		const std::string	&getName( void ) const;
 		const std::string	&getBuffer( void ) const;
-		bool				isRegistered( void ) const;
+		bool			isBufferComplete( void ) const;
 
 		void				setNick( std::string nick );
 		void				setUser( std::string user );
-
-		void				confirmRegistration( void );
 
 		void				addBuffer( const std::string &data );
 		void				clearBuffer( void );
