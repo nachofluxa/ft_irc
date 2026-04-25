@@ -11,6 +11,7 @@ t_command	commandFactory( std::string buf )
 	t_command					bufCommand;
 	const std::string			validTypes[] = { "USER", "NICK", "PASS" };
 
+	bufCommand.raw = buf;
 	if ( std::count(buf.begin(), buf.end(), ':' ) > 2 )
 		throw std::invalid_argument("Formato invalido");
 	splitedBuf = split( buf );

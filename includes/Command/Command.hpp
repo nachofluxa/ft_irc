@@ -6,6 +6,7 @@
 
 struct s_command
 {
+	std::string					raw;
 	std::string					prefix;
 	std::string					type;
 	std::vector< std::string >	params;

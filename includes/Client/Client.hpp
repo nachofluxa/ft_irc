@@ -21,10 +21,14 @@ class	Client
 		const std::string	&getUser( void ) const;
 		const std::string	&getName( void ) const;
 		const std::string	&getBuffer( void ) const;
-		bool			isBufferComplete( void ) const;
+		const unsigned char	&getRange( void ) const;
+		bool				isBufferComplete( void ) const;
 
 		void				setNick( std::string nick );
 		void				setUser( std::string user );
+		void				setName( std::string name );
+
+		void				raiseFlag( unsigned int bitPos );
 
 		void				addBuffer( const std::string &data );
 		void				clearBuffer( void );

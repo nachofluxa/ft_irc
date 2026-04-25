@@ -7,7 +7,6 @@ SRC			=	./src/
 
 SRCS		=	main.cpp \
 				Client/Client.cpp \
-				Client/validators.cpp \
 				Command/commandFactory/split.cpp \
 				Command/commandFactory/commandFactory.cpp \
 				Server/Server.cpp \
@@ -23,7 +22,7 @@ all			:	$(NAME)
 
 $(BUILD)%.o	:	$(SRC)%.cpp
 				@ mkdir -p $(dir $@)
-				@ $(CC) $(CFLAGS) -c -o $@ $< -I$(INC)
+				@ $(CXX) $(CFLAGS) -c -o $@ $< -I$(INC)
 
 $(NAME)		:	$(OBJS)
 				@ $(CXX) $(CFLAGS) -o $(NAME) $(OBJS)

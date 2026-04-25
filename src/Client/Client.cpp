@@ -1,8 +1,5 @@
 #include "Client/Client.hpp"
 
-bool	validNick( std::string nick );
-bool	validUser( std::string user );
-
 Client::Client( int fd )
 	:	_fd( fd ),
 		_nick(""),
@@ -14,7 +11,7 @@ Client::Client( int fd )
 Client::~Client( void )
 {}
 
-int			Client::getFd( void ) const
+int	Client::getFd( void ) const
 { return ( this->_fd ); }
 
 const std::string	&Client::getNick( void ) const
@@ -26,7 +23,10 @@ const std::string	&Client::getUser( void ) const
 const std::string	&Client::getBuffer( void ) const
 { return ( this->_buffer ); }
 
-bool			Client::isBufferComplete( void ) const
+const unsigned char	&Client::getRange( void ) const
+{ return ( this->_range ); }
+
+bool	Client::isBufferComplete( void ) const
 {
 	if ( this->_buffer[ this->_buffer.size() - 1 ] == '\n' )
 		return ( true );
@@ -35,30 +35,19 @@ bool			Client::isBufferComplete( void ) const
 
 
 void	Client::setNick( std::string nick )
-{
-	if ( validNick( nick ) == false )
-	{
-		// lanzar error
-		return ;
-	}
-	this->_nick = nick;
-	this->_range |= 1 << 2;
-}
+{ this->_nick = nick; }
 
 void	Client::setUser( std::string user )
+{ this->_user = user; }
+
+void	Client::setName( std::string name )
+{ this->_name = name; }
+
+void	Client::raiseFlag( unsigned int bitPos )
 {
-	if ( _range & ( 1 << 1 ) )
-	{
-		// lanzar error
-		return ;
-	}
-	if ( validUser( user ) == false )
-	{
-		// lanzar error
-		return ;
-	}
-	this->_user = user;
-	this->_range |= ( 1 << 1 );
+	if ( bitPos > 4 )
+		throw std::out_of_range("Flag position out of range");
+	this->_range |= ( 1 << bitPos );
 }
 
 void	Client::addBuffer( const std::string &data )
