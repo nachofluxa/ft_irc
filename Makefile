@@ -10,7 +10,8 @@ SRCS		=	main.cpp \
 				Client/validators.cpp \
 				Command/commandFactory/split.cpp \
 				Command/commandFactory/commandFactory.cpp \
-				Server/Server.cpp
+				Server/Server.cpp \
+				Channel/Channel.cpp
 
 OBJS		=	$(addprefix $(BUILD), $(SRCS:.cpp=.o))
 DEPS		=	$(addprefix $(BUILD), $(SRCS:.cpp=.d))
