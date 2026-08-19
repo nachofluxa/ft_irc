@@ -1,40 +1,52 @@
-NAME		=	ircserv
-INC			=	./includes/
-TEMPLAT		=	./templates/
-BUILD		=	./build/
-SRC			=	./src/
+NAME			:=	ircserv
 
+SRC				:=	src/
+HEA				:=	headers/
+BUI				:=	build/
 
-SRCS		=	main.cpp \
-				Client/Client.cpp \
-				Command/commandFactory/split.cpp \
-				Command/commandFactory/commandFactory.cpp \
-				Server/Server.cpp \
-				Channel/Channel.cpp
+SRCS			:=	main.cpp \
+					Server/AServer.cpp \
+					Server/AServerClient.cpp \
+					Client/AClient.cpp \
+					Socket/Socket.cpp \
+					IRC/IRCClient.cpp \
+					IRC/IRCCommand.cpp \
+					IRC/IRCServer.cpp \
+					IRC/Channel.cpp
 
-OBJS		=	$(addprefix $(BUILD), $(SRCS:.cpp=.o))
-DEPS		=	$(addprefix $(BUILD), $(SRCS:.cpp=.d))
+OBJS			:=  $(addprefix $(BUI), $(SRCS:.cpp=.o))
+DEPS			:=  $(addprefix $(BUI), $(SRCS:.cpp=.d))
 
-CXX			=	c++
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 -MMD -fsanitize=address
+CXX				:=	c++
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -MMD
 
-all			:	$(NAME)
+RESET			:=	\033[0m
+RED				:=	\033[0;91m
+GREEN			:=	\033[0;92m
+YELLOW			:=	\033[0;93m
+BOLD			:=	\033[1m
 
-$(BUILD)%.o	:	$(SRC)%.cpp
-				@ mkdir -p $(dir $@)
-				@ $(CXX) $(CFLAGS) -c -o $@ $< -I$(INC)
+all				:	$(NAME)
 
-$(NAME)		:	$(OBJS)
-				@ $(CXX) $(CFLAGS) -o $(NAME) $(OBJS)
+$(BUI)%.o		:	$(SRC)%.cpp
+					@ mkdir -p $(dir $@)
+					@ $(CXX) $(CXXFLAGS) -c -o $@ $< -I./$(HEA)
 
-clean		:
-				rm -rf $(BUILD)
+$(NAME)			:	$(OBJS)
+					@ $(CXX) $(CXXFLAGS) -o $@ $(OBJS)
 
-fclean		:	clean
-				rm -f $(NAME)
+clean			:
+					@ echo -e "$(YELLOW)$(BOLD)Cleaning files in $(BUI)...$(RESET)$(RED)"
+					@ rm -rfv build
+					@ echo -e -n "$(RESET)"
 
-re			:	fclean all
+fclean			:	clean
+					@ echo -e "$(YELLOW)$(BOLD)Cleaning program build...$(RESET)$(RED)"
+					@ rm -fv $(NAME)
+					@ rm -rfv $(BUI)
 
-.PHONY		:	all clean fclean re
+re				:	fclean all
+
+.PHONY			:	all clean fclean re
 
 -include $(DEPS)

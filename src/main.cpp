@@ -1,25 +1,32 @@
-#include "Server/Server.hpp"
-#include <cstdlib>
+#include <csignal>
+#include <exception>
+#include <signal.h>
 #include <iostream>
+#include <cstdlib>
+#include <IRC/IRCServer.hpp>
 
-int main(int argc, char **argv)
+int	main( int argc, char **argv )
 {
-	// int				aux;
-	unsigned int	port;
-	if (argc != 3)
+	if ( argc != 3 )
 	{
-		std::cout << "There must be 3 and only 3 args." << std::endl;
-		return (1);
-	}
-	port = std::atoi( argv[ 1 ] );
-	if ( port < 1024 )
-	{
-		std::cerr << "Invalid port. ( 1024 – 49151 )" << std::endl;
+		std::cerr << "Usage: ./ircserv <port> <password>" << "\n";
 		return ( 1 );
 	}
-	Server serv( port );
 
-	serv.init();
-	serv.run();
+	signal( SIGPIPE, SIG_IGN );
+
+	try
+	{
+		int			port = std::atoi( argv[ 1 ] );
+		std::string	pass = argv[ 2 ];
+
+		IRCServer	server( port, pass );
+		server.run();
+	}
+	catch ( const std::exception &e )
+	{
+		std::cerr << e.what() << "\n";
+		return ( 1 );
+	}
 	return ( 0 );
 }
